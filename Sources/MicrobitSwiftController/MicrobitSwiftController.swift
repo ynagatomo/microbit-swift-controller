@@ -8,7 +8,7 @@
 import Foundation
 
 @MainActor
-open class MicrobitSwiftController: ObservableObject {
+public class MicrobitSwiftController: ObservableObject {
     @Published var errorNotification = false  // client can clear this flag
     @Published var errorMessage = ""
 
