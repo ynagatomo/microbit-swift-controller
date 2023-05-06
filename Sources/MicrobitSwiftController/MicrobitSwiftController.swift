@@ -25,19 +25,19 @@ import Foundation
 //    @Published var accelerometer = SIMD3<Float>.zero
 //    @Published var magnetometer = SIMD3<Float>.zero
 //    @Published var inputPins = [UInt8](repeating: 0, count: 20)
-    var errorNotification = false  // client can clear this flag
-    var errorMessage = ""
+    public var errorNotification = false  // client can clear this flag
+    public var errorMessage = ""
 
-    var bluetoothEnabled = false
-    var connected = false
+    public var bluetoothEnabled = false
+    public var connected = false
 //    @Published var deviceInformation: DeviceInformation? = nil
-    var services = [Service]()
-    var buttonA = ButtonState.off
-    var buttonB = ButtonState.off
+    public var services = [Service]()
+    public var buttonA = ButtonState.off
+    public var buttonB = ButtonState.off
 //    @Published var temperature = 0
-    var accelerometer = SIMD3<Float>.zero
-    var magnetometer = SIMD3<Float>.zero
-    var inputPins = [UInt8](repeating: 0, count: 20)
+    public var accelerometer = SIMD3<Float>.zero
+    public var magnetometer = SIMD3<Float>.zero
+    public var inputPins = [UInt8](repeating: 0, count: 20)
 
 //    struct DeviceInformation {
 //        let modelNumber: String
