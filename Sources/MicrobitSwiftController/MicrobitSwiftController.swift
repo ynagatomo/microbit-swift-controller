@@ -66,6 +66,8 @@ open class MicrobitSwiftController: ObservableObject {
 
     private let microbitBLEHandler = MicrobitBLEHandler.shared
     private let executor = MicrobitExecutor()
+
+    public init() { }
 }
 
 // MARK: - API: Manager
