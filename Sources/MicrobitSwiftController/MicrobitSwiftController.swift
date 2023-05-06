@@ -306,9 +306,9 @@ extension MicrobitSwiftController {
         Task {
             if let stream = microbitBLEHandler.makeMagnetometerDataStream() {
                 for await mags in stream {
-                    magnetometer = SIMD3<Float>([Float(mags[0]),
-                                                 Float(mags[1]),
-                                                 Float(mags[2])])
+                    magnetometer = SIMD3<Float>([Float(mags[0]) / 1000.0,
+                                                 Float(mags[1]) / 1000.0,
+                                                 Float(mags[2]) / 1000.0])
                 }
             }
         }
