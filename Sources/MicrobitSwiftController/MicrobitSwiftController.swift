@@ -62,6 +62,11 @@ public class MicrobitSwiftController: ObservableObject {
         let pin: UInt8
         let value: UInt16  // [0...1024]
         let period: UInt32 // [microseconds]
+        public init(pin: UInt8, value: UInt16, period: UInt32) {
+            self.pin = pin
+            self.value = value
+            self.period = period
+        }
     }
 
     private let microbitBLEHandler = MicrobitBLEHandler.shared
