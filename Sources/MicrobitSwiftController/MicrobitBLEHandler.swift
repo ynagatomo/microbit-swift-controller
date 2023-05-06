@@ -11,12 +11,12 @@ import CoreBluetooth
 // swiftlint:disable file_length
 // swiftlint:disable line_length
 
-final class MicrobitBLEHandler: NSObject {
-    enum BLEState: String {
+public final class MicrobitBLEHandler: NSObject {
+    public enum BLEState: String {
         case poweredOff, poweredOn, resetting, unauthorized
         case unsupported, unknown
     }
-    enum BLEError: Error {
+    public enum BLEError: Error {
         case errPoweredOff     // BLE is powered off
         case errUnauthorized   // BLE is not authorized
         case errUnavailable    // BLE is not available (resetting, unsupported,..)
@@ -27,15 +27,15 @@ final class MicrobitBLEHandler: NSObject {
         case errNotDone        // Not done for any reason
         case errUnknown
     }
-    enum BLEPeripheralState: String {
+    public enum BLEPeripheralState: String {
         case idle, scanning
         case connecting, discovering, connected
         case disconnecting, disconnected
         case reading, writing, setting
     }
 
-    static let shared = MicrobitBLEHandler()          // Shared object
-    static let namePrefix = "BBC micro:bit"   // Micro:bit peripheral name prefix
+    public static let shared = MicrobitBLEHandler()          // Shared object
+    public static let namePrefix = "BBC micro:bit"   // Micro:bit peripheral name prefix
 
     private var centralManager: CBCentralManager!
     private(set) var bleState = BLEState.unknown      // BLE state of the central
@@ -43,7 +43,6 @@ final class MicrobitBLEHandler: NSObject {
     private var peripheral: CBPeripheral!
     private var peripheralRSSI: Int = 0
     private(set) var availableServices: [MicrobitBLEProfile] = [] // Service on the peripheral
-//    private var characteristics: [CBCharacteristic] = []  // Discovered characteristics on the peripheral
     private var characteristics: [String: CBCharacteristic] = [:]  // Discovered characteristics on the peripheral
 
     private var stateStreamContinuation: AsyncStream<BLEState>.Continuation?
@@ -52,10 +51,6 @@ final class MicrobitBLEHandler: NSObject {
     private var connectContinuation: CheckedContinuation<UUID, Error>?
     private var discoveringCharForServiceCount = 0 // the number of services
     private var disconnectContinuation: CheckedContinuation<UUID, Error>?
-//    private var readStringContinuation: CheckedContinuation<String, Error>?
-//    private var readInt8Continuation: CheckedContinuation<Int, Error>?
-//    private var readInt16Continuation: CheckedContinuation<Int, Error>?
-//    private var readIntArrayContinuation: CheckedContinuation<[Int], Error>?
     private var notifyContinuation: CheckedContinuation<Void, Error>?
     private var writeContinuation: CheckedContinuation<Void, Error>?
     private var readDataContinuation: CheckedContinuation<Data?, Error>?
@@ -158,10 +153,6 @@ extension MicrobitBLEHandler {
         }
 
         peripheralState = .scanning
-//        if let peripheralStateStreamContinuation {
-//            peripheralStateStreamContinuation.yield(peripheralState)
-//        } else {
-//        }
         peripheralStateStreamContinuation?.yield(peripheralState)
 
         return try await withCheckedThrowingContinuation { continuation in
@@ -219,7 +210,7 @@ extension MicrobitBLEHandler {
 
 extension MicrobitBLEHandler: CBCentralManagerDelegate {
     // BLE State Updating
-    func centralManagerDidUpdateState(_ central: CBCentralManager) {
+    public func centralManagerDidUpdateState(_ central: CBCentralManager) {
         print("[CB-Delegate] Updated the state to \(central.state)")
 
         var state: BLEState  = .unknown
@@ -240,7 +231,7 @@ extension MicrobitBLEHandler: CBCentralManagerDelegate {
     }
 
     // BLE Discovering a peripheral
-    func centralManager(_ central: CBCentralManager, didDiscover peripheral: CBPeripheral,
+    public func centralManager(_ central: CBCentralManager, didDiscover peripheral: CBPeripheral,
                         advertisementData: [String: Any], rssi RSSI: NSNumber) {
         print("[CB-Delegate] Discovered a peripheral \(peripheral), RSSI = \(RSSI)")
 
@@ -260,7 +251,7 @@ extension MicrobitBLEHandler: CBCentralManagerDelegate {
     }
 
     // BLE Connected
-    func centralManager(_ central: CBCentralManager, didConnect peripheral: CBPeripheral) {
+    public func centralManager(_ central: CBCentralManager, didConnect peripheral: CBPeripheral) {
         print("[CB-Delegate] Connected to the peripheral. \(peripheral)")
         assert(self.peripheral == peripheral)
 
@@ -276,7 +267,7 @@ extension MicrobitBLEHandler: CBCentralManagerDelegate {
     }
 
     // BLE Failed to connect
-    func centralManager(_ central: CBCentralManager, didFailToConnect peripheral: CBPeripheral, error: Error?) {
+    public func centralManager(_ central: CBCentralManager, didFailToConnect peripheral: CBPeripheral, error: Error?) {
         print("[CB-Delegate] Failed to connected to the peripheral. \(peripheral) Error: \(error?.localizedDescription ?? "none")")
         assert(error != nil)
         assert(self.peripheral != nil)
@@ -292,7 +283,7 @@ extension MicrobitBLEHandler: CBCentralManagerDelegate {
 
     // BLE Disconnect
     // The `error` represents the reason of the disconnect. It does not represent API errors.
-    func centralManager(_ central: CBCentralManager, didDisconnectPeripheral peripheral: CBPeripheral, error: Error?) {
+    public func centralManager(_ central: CBCentralManager, didDisconnectPeripheral peripheral: CBPeripheral, error: Error?) {
         print("[CB-Delegate] Disconnected. \(peripheral) Error: \(error?.localizedDescription ?? "none")")
 
         peripheralState = .disconnected    // disconnecting => disconnected
@@ -320,24 +311,13 @@ extension MicrobitBLEHandler: CBCentralManagerDelegate {
 
 extension MicrobitBLEHandler: CBPeripheralDelegate {
     // BLE Discovering services on the peripheral
-    func peripheral(_ peripheral: CBPeripheral, didDiscoverServices error: Error?) {
+    public func peripheral(_ peripheral: CBPeripheral, didDiscoverServices error: Error?) {
         print("[CB-Delegate] Discovered \(peripheral.services?.count ?? 0) services. Error: \(error?.localizedDescription ?? "none")")
 
         if error != nil {
             // An error occurred : keep the connection (but no services)
             print("[CB-Delegate] Error. No service was found and will terminate this continuation.")
             assert(self.peripheral != nil)
-
-//            self.peripheral = nil
-//            peripheralState = .disconnecting
-//            peripheralStateStreamContinuation?.yield(peripheralState)
-//            centralManager.cancelPeripheralConnection(peripheral)
-//            print("[CB-Delegate] The connection is disconnecting.")
-// does not wait for the finishing to disconnect, to make code simple
-//            assert(connectContinuation != nil)
-//            connectContinuation?.resume(throwing: error)
-//            connectContinuation = nil
-
             assert(connectContinuation != nil)
             connectContinuation?.resume(returning: peripheral.identifier)
             connectContinuation = nil
@@ -389,31 +369,8 @@ extension MicrobitBLEHandler: CBPeripheralDelegate {
     }
 
     // BLE Discovering characteristics for the services on the peripheral
-    func peripheral(_ peripheral: CBPeripheral, didDiscoverCharacteristicsFor service: CBService, error: Error?) {
+    public func peripheral(_ peripheral: CBPeripheral, didDiscoverCharacteristicsFor service: CBService, error: Error?) {
         print("[CB-Delegate] Discovered \(service.characteristics?.count ?? 0) characteristics. Error: \(error?.localizedDescription ?? "none")")
-
-        // When error is not nil, do nothing on the error
-        // Check the service.characteristics and continue.
-
-//        if let error {
-            // An error occurred : keep the connection (but no characteristics for the service)
-            // Do nothing for the error
-
-//            print("[CB-Delegate] Error will be thrown and will terminate this continuation.")
-//            assert(self.peripheral != nil)
-//            self.peripheral = nil
-//            peripheralState = .disconnecting
-//            peripheralStateStreamContinuation?.yield(peripheralState)
-//
-//            centralManager.cancelPeripheralConnection(peripheral)
-//            print("[CB-Delegate] The connection is disconnecting.")
-//
-//            // does not wait for the finishing to disconnect, to make code simple
-//            assert(connectContinuation != nil)
-//            connectContinuation?.resume(throwing: error)
-//            connectContinuation = nil
-//            return
-//        }
 
         // Some characteristics might be discovered (do even if error occurs)
         if let characteristics = service.characteristics {
@@ -422,7 +379,6 @@ extension MicrobitBLEHandler: CBPeripheralDelegate {
                 print("[CB-Delegate]      - UUID = \(characteristic.uuid.uuidString)")
                 // Store it into local variable for the quick access
                 self.characteristics[characteristic.uuid.uuidString] = characteristic
-//                self.characteristics.append(characteristic)
             }
         } else {
             // no characteristics discovered
@@ -444,33 +400,12 @@ extension MicrobitBLEHandler: CBPeripheralDelegate {
         }
     }
 
-    func peripheral(_ peripheral: CBPeripheral, didUpdateValueFor characteristic: CBCharacteristic, error: Error?) {
+    public func peripheral(_ peripheral: CBPeripheral, didUpdateValueFor characteristic: CBCharacteristic, error: Error?) {
         // print("[CB-Delegate] UpdateValue for \(characteristic) Error: \(error?.localizedDescription ?? "none")")
 
         if let error {
             // An error occurred : keep the connection
             print("[CB-Delegate] Error will be thrown and will terminate this continuation.")
-//            if readStringContinuation != nil {
-//                readStringContinuation?.resume(throwing: error)
-//                readStringContinuation = nil
-//
-//                peripheralState = .connected    // reading => connected
-//                peripheralStateStreamContinuation?.yield(peripheralState)
-//            } else
-//            if readInt8Continuation != nil {
-//                readInt8Continuation?.resume(throwing: error)
-//                readInt8Continuation = nil
-//
-//                peripheralState = .connected    // reading => connected
-//                peripheralStateStreamContinuation?.yield(peripheralState)
-//            } else
-//            if readInt16Continuation != nil {
-//                readInt16Continuation?.resume(throwing: error)
-//                readInt16Continuation = nil
-//
-//                peripheralState = .connected    // reading => connected
-//                peripheralStateStreamContinuation?.yield(peripheralState)
-//            } else
             if readDataContinuation != nil {
                 readDataContinuation?.resume(throwing: error)
                 readDataContinuation = nil
@@ -487,53 +422,6 @@ extension MicrobitBLEHandler: CBPeripheralDelegate {
 
         // take the updated value
 
-//        if readStringContinuation != nil {
-//            var text = ""
-//            if let data = characteristic.value {
-//                text = String(decoding: data, as: UTF8.self)
-//            } else {
-//                // do nothing
-//            }
-//
-//            readStringContinuation?.resume(returning: text)
-//            readStringContinuation = nil
-//
-//            peripheralState = .connected    // reading => connected
-//            peripheralStateStreamContinuation?.yield(peripheralState)
-//        } else
-//        if readInt8Continuation != nil {
-//            var result = 0
-//            if let data = characteristic.value {
-//                var byte: CUnsignedChar = 0
-//                data.copyBytes(to: &byte, count: 1)
-//                result = Int(byte)
-//            } else {
-//                // do nothing
-//                print("[CB-Delegate] UpdateValue : no Characteristic.value")
-//            }
-//
-//            readInt8Continuation?.resume(returning: result)
-//            readInt8Continuation = nil
-//
-//            peripheralState = .connected    // reading => connected
-//            peripheralStateStreamContinuation?.yield(peripheralState)
-//        } else
-//        if readInt16Continuation != nil {
-//            var result = 0
-//            if let data = characteristic.value {
-//                let bytes = [UInt8](data)
-//                result = Int(bytes[1]) * 256 + Int(bytes[0])
-//            } else {
-//                // do nothing
-//                print("[CB-Delegate] UpdateValue : no Characteristic.value")
-//            }
-//
-//            readInt16Continuation?.resume(returning: result)
-//            readInt16Continuation = nil
-//
-//            peripheralState = .connected    // reading => connected
-//            peripheralStateStreamContinuation?.yield(peripheralState)
-//        } else
         if readDataContinuation != nil {
             let data = characteristic.value
 
@@ -618,7 +506,7 @@ extension MicrobitBLEHandler: CBPeripheralDelegate {
     }
 
     // BLE Discovering services on the peripheral
-    func peripheral(_ peripheral: CBPeripheral,
+    public func peripheral(_ peripheral: CBPeripheral,
                     didUpdateNotificationStateFor characteristic: CBCharacteristic, error: Error?) {
         print("[CB-Delegate] Updated notify state. Error: \(error?.localizedDescription ?? "none")")
 
@@ -645,7 +533,7 @@ extension MicrobitBLEHandler: CBPeripheralDelegate {
     }
 
     // BLE
-    func peripheral(_ peripheral: CBPeripheral, didWriteValueFor characteristic: CBCharacteristic, error: Error?) {
+    public func peripheral(_ peripheral: CBPeripheral, didWriteValueFor characteristic: CBCharacteristic, error: Error?) {
         print("[CB-Delegate] Wrote value. Error: \(error?.localizedDescription ?? "none")")
 
         if error != nil {
@@ -992,8 +880,6 @@ extension MicrobitBLEHandler {
     //
     // [Note] All Micro:bit pins are output by default.
     public func setIOPinConfiguration(inputPins: [Int]) async throws {
-//        let data = Data([UInt8(0x7), UInt8(0x0), UInt8(0x0), UInt8(0x0)])
-
         var value32: UInt32 = 0
         inputPins.forEach { pin in
             if pin >= 0 && pin <= 19 {
@@ -1043,7 +929,6 @@ extension MicrobitBLEHandler {
         let uint8s = [UInt8]()
         let values = pairs.reduce(into: uint8s) { $0 += [$1.0, $1.1] }
         let data = Data(values)
-//        let data = Data([UInt8(0x0), UInt8(0x1), UInt8(0x1), UInt8(0x0)])
         return try await BLEPeripheralWrite(
             uuid: MicrobitBLEProfile.iopinCharacteristicData,
             data: data)
@@ -1128,19 +1013,6 @@ extension MicrobitBLEHandler {
         peripheralState = .reading   // connected => reading
         peripheralStateStreamContinuation?.yield(peripheralState)
 
-//        return try await withCheckedThrowingContinuation { continuation in
-//            assert(readStringContinuation == nil)
-//            readStringContinuation = continuation
-//
-//            if let characteristic: CBCharacteristic
-//                = self.characteristics[uuid] {
-//                peripheral.readValue(for: characteristic)
-//            } else {
-//                // not supported on the peripheral (The characteristic was not discovered.)
-//                assertionFailure()
-//            }
-//        }
-
         let data = try await withCheckedThrowingContinuation { continuation in
             assert(readDataContinuation == nil)
             readDataContinuation = continuation
@@ -1181,19 +1053,6 @@ extension MicrobitBLEHandler {
         peripheralState = .reading   // connected => reading
         peripheralStateStreamContinuation?.yield(peripheralState)
 
-//        return try await withCheckedThrowingContinuation { continuation in
-//            assert(readInt8Continuation == nil)
-//            readInt8Continuation = continuation
-//
-//            if let characteristic: CBCharacteristic
-//                = self.characteristics[uuid] {
-//                peripheral.readValue(for: characteristic)
-//            } else {
-//                // not supported on the peripheral (The characteristic was not discovered.)
-//                assertionFailure()
-//            }
-//        }
-
         let data = try await withCheckedThrowingContinuation { continuation in
             assert(readDataContinuation == nil)
             readDataContinuation = continuation
@@ -1233,19 +1092,6 @@ extension MicrobitBLEHandler {
         peripheralState = .reading   // connected => reading
         peripheralStateStreamContinuation?.yield(peripheralState)
 
-//        return try await withCheckedThrowingContinuation { continuation in
-//            assert(readInt16Continuation == nil)
-//            readInt16Continuation = continuation
-//
-//            if let characteristic: CBCharacteristic
-//                = self.characteristics[uuid] {
-//                peripheral.readValue(for: characteristic)
-//            } else {
-//                // not supported on the peripheral (The characteristic was not discovered.)
-//                assertionFailure()
-//            }
-//        }
-
         let data = try await withCheckedThrowingContinuation { continuation in
             assert(readDataContinuation == nil)
             readDataContinuation = continuation
@@ -1284,18 +1130,6 @@ extension MicrobitBLEHandler {
         peripheralState = .reading   // connected => reading
         peripheralStateStreamContinuation?.yield(peripheralState)
 
-//        return try await withCheckedThrowingContinuation { continuation in
-//            assert(readIntArrayContinuation == nil)
-//            readIntArrayContinuation = continuation
-//
-//            if let characteristic: CBCharacteristic
-//                = self.characteristics[uuid] {
-//                peripheral.readValue(for: characteristic)
-//            } else {
-//                // not supported on the peripheral (The characteristic was not discovered.)
-//                assertionFailure()
-//            }
-//        }
         let data = try await withCheckedThrowingContinuation { continuation in
             assert(readDataContinuation == nil)
             readDataContinuation = continuation
@@ -1310,9 +1144,6 @@ extension MicrobitBLEHandler {
         }
 
         if let data {
-//            var result: [Int] = []
-//            let bytes = [UInt8](data)
-//            var buf: [Int16]
             let buf = data.withUnsafeBytes {
                 Array(UnsafeBufferPointer(
                     start: $0.baseAddress!.assumingMemoryBound(to: Int16.self),
@@ -1320,7 +1151,6 @@ extension MicrobitBLEHandler {
             }
 
             let result = [Int(buf[0]), Int(buf[1]), Int(buf[2])]
-//            print("🔥 UpdateValue: data = \(bytes) result = \(result) buf = \(buf)")
             return result
         } else {
             // do nothing
@@ -1357,7 +1187,6 @@ extension MicrobitBLEHandler {
                 assertionFailure()
             }
         }
-//        print("🧊🧊 data = \(data) data.count = \(data?.count)")
         if let data {
             let uint8s = [UInt8](data)
             let result = uint8s.map { Int($0) }
@@ -1398,36 +1227,4 @@ extension MicrobitBLEHandler {
             }
         }
     }
-
-//    private func BLEPeripheralWrite(uuid: String, bytes: [UInt8]) async throws {
-//        assert(centralManager != nil)
-//
-//        if self.characteristics[uuid] == nil {
-//            // The characteristic is not supported on the peripheral.
-//            // The characteristic was not discovered.
-//            throw BLEError.errNotSupported
-//        }
-//
-//        try checkStateAndThrowErrors()  // Check the BLE Central State
-//        if peripheralState != .connected {
-//            throw BLEError.errWorking   // illegal state
-//        }
-//
-//        peripheralState = .writing   // connected => writing
-//        peripheralStateStreamContinuation?.yield(peripheralState)
-//
-//        return try await withCheckedThrowingContinuation { continuation in
-//            assert(writeContinuation == nil)
-//            writeContinuation = continuation
-//
-//            let data = Data(bytes)
-//            if let characteristic: CBCharacteristic
-//                = self.characteristics[uuid] {
-//                peripheral.writeValue(data, for: characteristic, type: .withResponse)
-//            } else {
-//                // not supported on the peripheral (The characteristic was not discovered.)
-//                assertionFailure()
-//            }
-//        }
-//    }
 }

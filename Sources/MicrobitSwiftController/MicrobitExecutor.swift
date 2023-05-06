@@ -12,7 +12,6 @@ final class MicrobitExecutor {
     enum Command {
         case connect
         case disconnect
-//        case setNotification(uuid: String, enable: Bool)
         case setMagnetometer(period: UInt16)
         case setAccelerometer(period: UInt16)
         case display(matrix: [UInt8])
@@ -42,7 +41,6 @@ final class MicrobitExecutor {
                     let command = commandQueue.removeFirst()  // pop the first one
                     try await execute(command)
                 }
-                // await Task.yield()
                 try await Task.sleep(for: .microseconds(100)) // 10 [Hz]
             }
             print("[Executor] Stopped running.")
@@ -62,7 +60,7 @@ final class MicrobitExecutor {
     }
 }
 
-// MARK: - API: Commands
+// MARK: - Commands
 
 extension MicrobitExecutor {
     func connect() {
@@ -74,11 +72,6 @@ extension MicrobitExecutor {
         let command = Command.disconnect
         commandQueue.append(command)
     }
-
-//    func setNotification(uuid: String, enable: Bool) {
-//        let command = Command.setNotification(uuid: uuid, enable: enable)
-//        commandQueue.append(command)
-//    }
 
     func setMagnetometer(period: UInt16) {
         let command = Command.setMagnetometer(period: period)
@@ -141,8 +134,6 @@ extension MicrobitExecutor {
             try await cmdConnect()
         case .disconnect:
             try await cmdDisconnect()
-//        case .setNotification(let uuid, let enable):
-//            try await cmdSetNotification(uuid: uuid, enable: enable)
         case .setMagnetometer(let period):
             try await cmdSetMagnetometer(period: period)
         case .setAccelerometer(let period):
@@ -195,10 +186,6 @@ extension MicrobitExecutor {
             // just ignore the command
         }
     }
-
-//    private func cmdSetNotification(uuid: String, enable: Bool) async throws {
-//
-//    }
 
     private func cmdSetMagnetometer(period: UInt16) async throws {
         if microbitBLEHandler.peripheralState == .connected {

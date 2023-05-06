@@ -6,8 +6,6 @@
 //
 
 enum MicrobitBLEProfile: String {
-    //    case genericAccess
-    //    case genericAttribute
     case deviceInformation
     case temperature
     case button
@@ -19,27 +17,17 @@ enum MicrobitBLEProfile: String {
     // BLE Profile: BBC microbit V1_11
     // https://lancaster-university.github.io/microbit-docs/resources/bluetooth/bluetooth_profile.html
 
-    //    static let genericAccessUUID = "00001800-0000-1000-8000-00805F9B34FB" // Mandatory
-    //        static let genericAccessUUID = "1800"
-    //    static let genericCharacteristicDeviceNameUUID = "00002A00-0000-1000-8000-00805F9B34FB" // Mandatory
-    //    static let genericCharacteristicAppearanceUUID = "00002A01-0000-1000-8000-00805F9B34FB" // Mandatory
-    //    static let genericCharacteristicParametersUUID = "00002A04-0000-1000-8000-00805F9B34FB" // Mandatory
-
-    //    static let generalAttributeUUID = "00001801-0000-1000-8000-00805F9B34FB" // Mandatory
-    //        static let generalAttributeUUID = "1801"
-    //    static let attributeServiceChangedUUID = "2A05" // Optional
-
-    //    static let deviceInformationUUID = "0000180A-0000-1000-8000-00805F9B34FB" // Mandatory
+    // deviceInformationUUID = "0000180A-0000-1000-8000-00805F9B34FB"
     static let deviceInformationUUID = "180A" // Mandatory
-    // static let infoCharacteristicModelNumberUUID = "00002A24-0000-1000-8000-00805F9B34FB" // Optional
+    // infoCharacteristicModelNumberUUID = "00002A24-0000-1000-8000-00805F9B34FB"
     static let infoCharacteristicModelNumberUUID = "2A24" // Optional
-    // static let infoCharacteristicSerialNumberUUID = "00002A25-0000-1000-8000-00805F9B34FB" // Optional
+    // infoCharacteristicSerialNumberUUID = "00002A25-0000-1000-8000-00805F9B34FB"
     static let infoCharacteristicSerialNumberUUID = "2A25" // Optional
-    // static let infoCharacteristicHardwareRevUUID = "00002A27-0000-1000-8000-00805F9B34FB" // Optional
+    // infoCharacteristicHardwareRevUUID = "00002A27-0000-1000-8000-00805F9B34FB"
     static let infoCharacteristicHardwareRevUUID = "2A27" // Optional
-    // static let infoCharacteristicFirmwareRevUUID = "00002A26-0000-1000-8000-00805F9B34FB" // Optional
+    // infoCharacteristicFirmwareRevUUID = "00002A26-0000-1000-8000-00805F9B34FB"
     static let infoCharacteristicFirmwareRevUUID = "2A26" // Optional
-    // static let infoCharacteristicManufactureUUID = "00002A29-0000-1000-8000-00805F9B34FB" // Mandatory
+    // infoCharacteristicManufactureUUID = "00002A29-0000-1000-8000-00805F9B34FB"
     static let infoCharacteristicManufactureUUID = "2A29" // Mandatory
 
     static let temperatureServiceUUID = "E95D6100-251D-470A-A062-FA1922DFA9A8"
@@ -72,8 +60,6 @@ enum MicrobitBLEProfile: String {
     static let accelerometerCharacteristicPeriod = "E95DFB24-251D-470A-A062-FA1922DFA9A8"
 
     static let serviceUUIDs = [
-        // genericAccessUUID: genericAccess,
-        // generalAttributeUUID: genericAttribute,
         deviceInformationUUID: deviceInformation,
         temperatureServiceUUID: temperature,
         buttonServiceUUID: button,
@@ -84,10 +70,6 @@ enum MicrobitBLEProfile: String {
     ]
 
     static let characteristicUUIDs: [String: [String]] = [
-        //    genericAccessUUID: [genericCharacteristicDeviceNameUUID,
-        //                        genericCharacteristicAppearanceUUID,
-        //                        genericCharacteristicParametersUUID],
-        //    generalAttributeUUID: [attributeServiceChangedUUID],
         deviceInformationUUID: [
             infoCharacteristicModelNumberUUID,
             infoCharacteristicSerialNumberUUID,
