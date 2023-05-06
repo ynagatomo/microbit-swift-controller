@@ -7,8 +7,11 @@
 
 import Foundation
 
-@MainActor
-public class MicrobitSwiftController: ObservableObject {
+//@MainActor
+//public class MicrobitSwiftController: ObservableObject {
+    @MainActor
+    public class MicrobitSwiftController {
+
 //    @Published var errorNotification = false  // client can clear this flag
 //    @Published var errorMessage = ""
 //
