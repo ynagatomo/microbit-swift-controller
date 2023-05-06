@@ -7,37 +7,21 @@
 
 import Foundation
 
-//@MainActor
-//public class MicrobitSwiftController: ObservableObject {
-//    @MainActor
-    public class MicrobitSwiftController {
+@MainActor
+public class MicrobitSwiftController: ObservableObject {
+    @Published var errorNotification = false  // client can clear this flag
+    @Published var errorMessage = ""
 
-//    @Published var errorNotification = false  // client can clear this flag
-//    @Published var errorMessage = ""
-//
-//    @Published var bluetoothEnabled = false
-//    @Published var connected = false
-////    @Published var deviceInformation: DeviceInformation? = nil
-//    @Published var services = [Service]()
-//    @Published var buttonA = ButtonState.off
-//    @Published var buttonB = ButtonState.off
-////    @Published var temperature = 0
-//    @Published var accelerometer = SIMD3<Float>.zero
-//    @Published var magnetometer = SIMD3<Float>.zero
-//    @Published var inputPins = [UInt8](repeating: 0, count: 20)
-    public var errorNotification = false  // client can clear this flag
-    public var errorMessage = ""
-
-    public var bluetoothEnabled = false
-    public var connected = false
+    @Published var bluetoothEnabled = false
+    @Published var connected = false
 //    @Published var deviceInformation: DeviceInformation? = nil
-    public var services = [Service]()
-    public var buttonA = ButtonState.off
-    public var buttonB = ButtonState.off
+    @Published var services = [Service]()
+    @Published var buttonA = ButtonState.off
+    @Published var buttonB = ButtonState.off
 //    @Published var temperature = 0
-    public var accelerometer = SIMD3<Float>.zero
-    public var magnetometer = SIMD3<Float>.zero
-    public var inputPins = [UInt8](repeating: 0, count: 20)
+    @Published var accelerometer = SIMD3<Float>.zero
+    @Published var magnetometer = SIMD3<Float>.zero
+    @Published var inputPins = [UInt8](repeating: 0, count: 20)
 
 //    struct DeviceInformation {
 //        let modelNumber: String

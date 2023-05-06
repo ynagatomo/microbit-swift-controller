@@ -7,7 +7,7 @@
 
 import Foundation
 
-// @MainActor
+@MainActor
 final class MicrobitExecutor {
     enum Command {
         case connect
