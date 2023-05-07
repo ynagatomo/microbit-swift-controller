@@ -30,7 +30,7 @@ Please check the sample iOS apps that use this Swift Package.
 
 ## State-less API
 
-@MainActor public class MicrobitSwiftController: ObservableObject
+`@MainActor public class MicrobitSwiftController: ObservableObject`
 
 The properties reflect the Bluetooth and Micro:bit's state.
 As they are `@Published` properties, you can easily bind them to SwiftUI views.
@@ -70,7 +70,12 @@ Please check the source code in detail.
 
 ## State-full API
 
+`public final class MicrobitBLEHandler: NSObject`
 
+There are many throwing async functions and AsyncStream objects.
+
+You need to use async/await and handle errors.
+Please check the source code in detail.
 
 ## References
 
