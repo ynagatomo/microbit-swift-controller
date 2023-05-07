@@ -31,6 +31,8 @@ Please check the sample iOS apps that use this Swift Package.
 1. microbit-swift-sample  : an iOS app that uses State-less Synchronous APIs. https://github.com/ynagatomo/microbit-swift-sample
 1. microbit-swift-sample2 : an iOS app that uses State-full Asynchronous APIs. (coming...)
 
+![diagram](assets/ClassDiagram.png)
+
 ## State-less API
 
 `@MainActor public class MicrobitSwiftController: ObservableObject`
