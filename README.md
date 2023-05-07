@@ -23,6 +23,9 @@ This swift package provide two levels APIs to make easy creating such apps.
 1. State-less Synchronous APIs ... With these APIs, you don't need to care about BLE states and Asynchronous behaviour. This is suitable for programming education for beginners.
 1. State-full Asynchronous APIs ... With these APIs, you can handle precise BLE states and errors. You use Swift Concurrency for their asynchronous functions.
 
+A sample iOS app using State-full Async APIs:
+![api2](assets/api2.gif)
+
 Please check the sample iOS apps that use this Swift Package.
 
 1. microbit-swift-sample  : an iOS app that uses State-less Synchronous APIs. https://github.com/ynagatomo/microbit-swift-sample
