@@ -30,20 +30,47 @@ Please check the sample iOS apps that use this Swift Package.
 
 ## State-less API
 
-`@MainActor public class MicrobitSwiftController: ObservableObject`swift
+@MainActor public class MicrobitSwiftController: ObservableObject
+
+The properties reflect the Bluetooth and Micro:bit's state.
+As they are `@Published` properties, you can easily bind them to SwiftUI views.
 
 | Property | Description |
 | -------- | ----------- |
-| `@Published public var bluetoothEnabled: Bool` | true: Bluetooth enable, false: disable |
-| `@Published public var connected: Bool` | true : connected, false: not connected |
-| `@Published public var services: [Service]` | detected BLE services when connected |
-| `@Published public var buttonA: ButtonState` | {.off, .on, .long (long pressed)} |
-| `@Published public var buttonB: ButtonState` | {.off, .on, .long (long pressed)} |
-| `@Published public var accelerometer: SIMD3<Float> | accelerometer data {x,y,z} |
-| `@Published public var magnetometer: SIMD3<Float> | magnetometer data {x, y, z} |
-| `@Published public var inputPins: [UInt8] | input data of each IO Pins [0...19] |
+| @Published public var bluetoothEnabled: Bool | true: Bluetooth enable, false: disable |
+| @Published public var connected: Bool | true : connected, false: not connected |
+| @Published public var services: [Service] | detected BLE services when connected |
+| @Published public var buttonA: ButtonState | {.off, .on, .long (long pressed)} |
+| @Published public var buttonB: ButtonState | {.off, .on, .long (long pressed)} |
+| @Published public var accelerometer: SIMD3<Float> | accelerometer data {x,y,z} |
+| @Published public var magnetometer: SIMD3<Float> | magnetometer data {x, y, z} |
+| @Published public var inputPins: [UInt8] | input data of each IO Pins [0...19] |
+
+The commands invoked below methods will be queued and will be executed one by one.
+Therefore, the methods return immediately. When occurred any error, the commands
+in the queue will be just ignored.  
+
+| Method | Description |
+| ------ | ----------- |
+| public func start() | starts the microbit-swift-controller. Call this once first. |
+| public func wait(milliseconds: UInt) | waits for the specified period. |
+| public func connect() | connects to the Micro:bit found first. |
+| public func disconnect() | disconnect from the Micro:bit. |
+| public func setMagnetometor(period: SensingPeriod) | sets the sensing period. |
+| public func setAccelerometer(period: SensingPeriod) | sets the sensing period. |
+| public func display(matrix: [UInt8]) | displays the LED dot matrix. |
+| public func setScroll(delay: UInt16) | sets the delay of scrolling text. |
+| public func display(text: String) | displays the text on the LED matrix. |
+| public func configure(inputPins: [Int]) | configures the pins input or output. |
+| public func configure(analogPins: [Int]) | configures the pins digital or analog. |
+| public func output(pins: [(pin: Int, value: UInt8)]) | outputs digital signals via output pins. |
+| public func output(analogPins: [PWMData]) | outputs analog signals via output pins. |
+
+Please check the source code in detail.
 
 ## State-full API
+
+
 
 ## References
 
